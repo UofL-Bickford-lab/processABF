@@ -13,10 +13,10 @@
 % Also function abf2load.m (abfload.m is old version, won't work with newer
 % versions of clampex abf files).
 %
-% AUTHOR: David C Alston (dalston2428@gmail.com) 2019
+% AUTHOR: David C Alston (dalston2428@gmail.com) 2020
 %
 % NOTES:
-%   - Assumes ~5/0V laser pulses (looks for diff(laserVoltage)>0.1 to find edges)
+%   - Assumes ~5/0V laser pulses (looks for diff(laserVoltage)>1 to find edges)
 %   - Puts the output files in the current folder for Matlab.
 %   - Each column of sweepData represents one sweep. The last column is analysis of the average sweep.
 %       -- So if you select sweeps 1 and 3 from three sweeps, the sweepData
@@ -36,11 +36,11 @@ clc
 clear
 close all
 %% CONTROLS
-searchWidthms = 60;                % milliseconds after start of a laser pulse
+searchWidthms = 30;                % milliseconds after start of a laser pulse
 baselineWidthms = 2;               % milliseconds before start of laser pulse (not including pulse start index)
-lasChanName = 'Blue Ligh';         % Channel containing laser data
-spikeChanName = 'From 10vM';       % Channel containing voltage data
-minOrMax = 'max';                  % 'min' = find troughs, 'max' = find peaks
+lasChanName = 'IN 4';         % Channel containing laser data
+spikeChanName = 'IN 0';       % Channel containing voltage data
+minOrMax = 'min';                  % 'min' = find troughs, 'max' = find peaks
 %% MAIN PROGRAM
 basePath = uigetdir([], 'Select folder containing .abf files');
 %basePath = '\Your\Path\To\Files\'; % For debugging
@@ -85,7 +85,7 @@ for i = 1:1:numFiles
             spikeChanIndx = chanNum;
             spikeFlag = 1;
         end
-        if (spikeFlag && lasFlag); break; end
+        if (spikeFlag && lasFlag); break; end % Found both channels so done (break loop)
     end
     if (~lasFlag || ~spikeFlag)
         disp('ERROR:: Laser or spike channel name not found for current file. Check your channel names under program controls. Channel names found:');
@@ -131,7 +131,7 @@ for i = 1:1:numFiles
         timeArrSec(:,1) = zeros(numel(laserData), 1);
         for n = 2:1:numel(laserData); timeArrSec(n,1) = timeArrSec(n-1,1)+(origData.sampIntmicroSec/1E6); end
         dy = abs(gradient(laserData));
-        [~, lasIndRange] = findpeaks(dy, 'MinPeakDistance',2, 'MinPeakHeight',2); % Requires signal processing toolbox
+        [~, lasIndRange] = findpeaks(dy, 'MinPeakDistance',2, 'MinPeakHeight',1); % Requires signal processing toolbox
         numRegions = numel(lasIndRange)/2;
         count = 0;
         for l = 2:2:numel(lasIndRange)
