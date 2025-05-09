@@ -11,7 +11,7 @@ load(myFile); % Load the .mat file into the workspace
 clearvars dataFolder myFile % Just to declutter the workspace a little bit
 %% MAIN PROGRAM
 % Using first laser pulse and mean sweep:
-region1V = sweepData(1, 3).window(:,1); % Just grab voltage data
+region1V = sweepData(1, 3).window(:,1);     % Just grab voltage data
 [X0] = intersect1D_F(region1V, halfWidthY); % All X intersect indices with chosen Y value
 if isempty(X0)
     beep;
@@ -19,10 +19,10 @@ if isempty(X0)
     return
 end
 firstIntersect = X0(1);
-for n = 2:1:numel(X0) % Find the next intersect that is > 2 indicies away from firstIntersect
+for n = 2:1:numel(X0)                   % Find the next intersect that is > 2 indicies away from firstIntersect
     currDiff = X0(n) - firstIntersect;
-    if currDiff > 2 % Found it, break out of the for loop
-        finalDelta = currDiff; % Final half width
+    if currDiff > 2                     % Found it, break out of the for loop
+        finalDelta = currDiff;          % Final half width
         break;
     end
 end

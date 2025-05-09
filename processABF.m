@@ -36,13 +36,14 @@ clc
 clear
 close all
 %% CONTROLS
-searchWidthms = 60;          % milliseconds after start of a laser pulse
-baselineWidthms = 2;         % milliseconds before start of laser pulse (not including pulse start index)
-lasChanName = 'Red Light';   % Channel containing laser data
-spikeChanName = 'From 10vM'; % Channel containing voltage data
-minOrMax = 'max';            % 'min' = find troughs, 'max' = find peaks
+searchWidthms = 60;                % milliseconds after start of a laser pulse
+baselineWidthms = 2;               % milliseconds before start of laser pulse (not including pulse start index)
+lasChanName = 'Blue Ligh';         % Channel containing laser data
+spikeChanName = 'From 10vM';       % Channel containing voltage data
+minOrMax = 'max';                  % 'min' = find troughs, 'max' = find peaks
 %% MAIN PROGRAM
-basePath = uigetdir('C:\', 'Select folder containing .abf files');
+basePath = uigetdir([], 'Select folder containing .abf files');
+%basePath = '\Your\Path\To\Files\'; % For debugging
 if basePath == 0; clear; return; end % If user cancels folder prompt, close without throwing an error
 numFiles = length(dir([basePath '\*.abf']));
 if numFiles == 0; beep; disp('ERROR:: No .abf files found in folder. Closing...'); clear; return; end
@@ -87,7 +88,11 @@ for i = 1:1:numFiles
         if (spikeFlag && lasFlag); break; end
     end
     if (~lasFlag || ~spikeFlag)
-        disp('ERROR:: Laser or spike channel name not found for current file. Check your channel names under program controls. Closing...');
+        disp('ERROR:: Laser or spike channel name not found for current file. Check your channel names under program controls. Channel names found:');
+        for chanNum = 1:1:numChannels
+            chanName = char(origData.fileInfo.recChNames(chanNum));
+            disp(chanName);
+        end
         beep;
         clear
         return
