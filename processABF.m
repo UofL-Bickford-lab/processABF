@@ -13,7 +13,7 @@
 % Also function abf2load.m (abfload.m is old version, won't work with newer
 % versions of clampex abf files).
 %
-% AUTHOR: David C Alston (dalston2428@gmail.com) 2020
+% AUTHOR: David C Alston (david.alston@louisville.edu) 2020
 %
 % NOTES:
 %   - Assumes ~5/0V laser pulses (looks for diff(laserVoltage)>1 to find edges)
